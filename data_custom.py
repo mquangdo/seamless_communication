@@ -27,10 +27,12 @@ ds_val = []
 
 data = load_dataset('strongpear/viet_muong_merged_0_200_denoise_silence_speaker101')['train']
 
-train_data, val_data = data.train_test_split(test_size = 0.05)
+data = data.train_test_split(test_size = 0.05)
+train_data = data['train']
+val_data = data['test']
 
 from tqdm import tqdm
-for item in tqdm(train_data, total=len(train_data)):
+for item in tqdm(train_data):
     id = str(uuid.uuid4())
     audio_array = item["audio"]['array']
     sampling_rate = item["audio"]['sampling_rate']
@@ -49,7 +51,7 @@ for item in tqdm(train_data, total=len(train_data)):
     } 
     ds_train.append(ds_item)
 
-for item in tqdm(val_data, total=len(val_data)):
+for item in tqdm(val_data):
     id = str(uuid.uuid4())
     audio_array = item["audio"]['array']
     sampling_rate = item["audio"]['sampling_rate']
@@ -101,3 +103,4 @@ dataset_dict = DatasetDict({
 dataset_dict.push_to_hub(
     repo_id="hungzin/viet_muong_merged_0_200_denoise_silence_speaker101",
 )
+
