@@ -11,6 +11,7 @@ import json
 import logging
 import os
 from pathlib import Path
+from typing import Any
 from tqdm import tqdm
 
 import torch
@@ -124,6 +125,12 @@ class UnitSpeechTokenizer(SpeechTokenizer):
         )
 
 
+def _json_default(value: Any) -> Any:
+    if isinstance(value, torch.Tensor):
+        return value.tolist()
+    raise TypeError(f"Object of type {value.__class__.__name__} is not JSON serializable")
+
+
 def download_fleurs(
     source_lang: str,
     target_lang: str,
@@ -152,7 +159,7 @@ def download_fleurs(
             sample.source.lang = source_lang
             sample.target.lang = target_lang
             sample.target.waveform = None  # already extracted units
-            fp_out.write(json.dumps(dataclasses.asdict(sample)) + "\n")
+            fp_out.write(json.dumps(dataclasses.asdict(sample), default=_json_default) + "\n")
     logger.info(f"Saved {idx} samples for split={split} to {manifest_path}")
     logger.info(f"Manifest saved to: {manifest_path}")
 
