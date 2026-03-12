@@ -90,16 +90,13 @@ class Speech2SpeechFleursDatasetBuilder:
     def iterate_lang_audio_samples(self, lang: str) -> Iterable[MultimodalSample]:
         ds = load_dataset(
             self.DATASET_NAME,
-            lang,
             split=self.split,
             cache_dir=self.dataset_cache_dir,
             streaming=False,
             trust_remote_code=True,
         )
         for item in ds:
-            audio_path = os.path.join(
-                os.path.dirname(item["path"]), item["audio"]["path"]
-            )
+            audio_path = item['path']
             (sample_id, audio_local_path, waveform, sampling_rate, text) = (
                 item["id"],
                 audio_path,
