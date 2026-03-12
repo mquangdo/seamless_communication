@@ -65,7 +65,8 @@ class Speech2SpeechFleursDatasetBuilder:
             or waveform_npy is None
         )
         if not should_skip_audio:
-            waveform = torch.from_numpy(waveform_npy).to(self.audio_dtype)
+            waveform_np = np.asarray(waveform_npy)
+            waveform = torch.from_numpy(waveform_np).to(self.audio_dtype)
         else:
             waveform = None
         if self.speech_tokenizer is not None and not should_skip_audio:
